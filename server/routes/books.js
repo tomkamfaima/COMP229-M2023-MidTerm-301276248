@@ -36,7 +36,7 @@ router.get('/add', (req, res, next) => {
       Genre: ""}
       
       res.render('books/details', {
-        title: 'Add',
+        title: 'Add Favourite',
         books: emptyBook
 });
 });
