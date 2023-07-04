@@ -42,11 +42,23 @@ router.get('/add', (req, res, next) => {
 });
 
 // POST process the Book Details page and create a new Book - CREATE
-router.post('/add', (req, res, next) => {
+router.post('/add', async(req, res, next) => {
 
     /*****************
      * ADD CODE HERE *
      *****************/
+    try{
+    const book = new Book({
+      Title: req.body.title, 
+      Price: req.body.price,
+      Author: req.body.author,
+      Genre: req.body.genre
+    })
+    await book.save();
+    res.redirect('/books');
+  }catch(err){
+    res.status(500).json({message:err.message})
+  }
 });
 
 // GET the Book Details page in order to edit an existing Book
