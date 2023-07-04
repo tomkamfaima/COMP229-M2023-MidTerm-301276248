@@ -62,15 +62,29 @@ router.post('/add', async(req, res, next) => {
 });
 
 // GET the Book Details page in order to edit an existing Book
-router.get('/:id', getBook, (req, res, next) => {
+router.get('/:id', async(req, res, next) => {
 
     /*****************
      * ADD CODE HERE *
      *****************/
-      res.render('books/details', {
-        title: 'Update',
-        books: res.book
-});
+    let id = req.params.id;
+    let book;
+    try{
+      book = await Book.findById(id);
+      if(book != null){
+        res.render('books/details', {
+          title: 'Update Details',
+          books: book
+        });
+      }else{
+        res.status(404).json({
+          message: 'Book with ID '+req.params.id+' cannot be found'
+        })
+      }
+    }catch(err){
+      res.status(500).json({message: err.message
+      })
+    }
 });
 
 // POST - process the information passed from the details form and update the document
@@ -101,31 +115,13 @@ router.get('/delete/:id', async(req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+    let id = req.params.id;
     try{
-      await Book.deleteOne({_id: req.params.id});
+      await Book.remove({_id:id});
       res.redirect('/books');
     }catch(err){
       res.status(500).json({message:err.message});
     }
 });
-
-
-async function getBook (req,res,next) {
-  let book;
-  try{
-    book = await Book.findById(req.params.id);
-    if(book == null){
-      return res.status(404).json({
-        message: 'Book with ID '+req.params.id+' cannot be found'
-      })
-    }
-  }catch(err){
-    return res.status(500).json({
-      message: err.message
-    })
-  }
-  res.book = book;
-  next(); 
-};
 
 module.exports = router;
