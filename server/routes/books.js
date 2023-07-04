@@ -54,7 +54,7 @@ router.post('/add', async(req, res, next) => {
       Author: req.body.author,
       Genre: req.body.genre
     })
-    await book.save();
+    await Book.create(book);
     res.redirect('/books');
   }catch(err){
     res.status(500).json({message:err.message})
