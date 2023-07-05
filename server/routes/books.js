@@ -34,12 +34,14 @@ router.get('/add', (req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+
+    //create an emptyBook object to pass blank values
     const emptyBook = {
       Title: "", 
       Price: "",
       Author: "",
       Genre: ""}
-      
+      //redener books details page
       res.render('books/details', {
         title: 'Add Favourite',
         books: emptyBook
@@ -52,15 +54,19 @@ router.post('/add', async(req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+
     try{
-    const book = new Book({
-      Title: req.body.title, 
-      Price: req.body.price,
-      Author: req.body.author,
-      Genre: req.body.genre
-    })
-    await Book.create(book);
-    res.redirect('/books');
+      //instantiate an object of Book model
+      const book = new Book({
+        Title: req.body.title, 
+        Price: req.body.price,
+        Author: req.body.author,
+        Genre: req.body.genre
+      })
+      //add a new book to the database
+      await Book.create(book);
+      //redirect too books
+      res.redirect('/books');
   }catch(err){
     res.status(500).json({message:err.message})
   }
@@ -72,9 +78,11 @@ router.get('/:id', async(req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+    //declare id with value of id from the req
     let id = req.params.id;
     let book;
     try{
+      //find book by id
       book = await Book.findById(id);
       if(book != null){
         res.render('books/details', {
@@ -98,6 +106,35 @@ router.post('/:id', async(req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+  //declare id with value of id from the req
+  let id = req.params.id;
+  let book;
+  //get updates from the req
+  let updates = {
+    Title: req.body.title, 
+    Price: req.body.price,
+    Author: req.body.author,
+    Genre: req.body.genre};
+
+  try{
+    //find book by id
+    book = await Book.findById(id);
+    if(book != null){
+      //update
+      await book.update(updates);
+      //redirect to books
+      res.redirect('/books');
+    }else{
+      res.status(404).json({
+        message: 'Book with ID '+req.params.id+' cannot be found'
+      })
+    }
+  }catch(err){
+    res.status(500).json({message: err.message
+    })
+  }
+
+  /* another way by findOneAndUpdate
   const filter = { _id: req.params.id };
   const update = {
     Title: req.body.title, 
@@ -111,7 +148,7 @@ router.post('/:id', async(req, res, next) => {
     res.redirect('/books');
   }catch(err){
     res.status(500).json({message:err.message})
-  }
+  }*/
 });
 
 // GET - process the delete by user id
@@ -120,9 +157,12 @@ router.get('/delete/:id', async(req, res, next) => {
     /*****************
      * ADD CODE HERE *
      *****************/
+    //declare id with value of id from the req
     let id = req.params.id;
     try{
+      //remove by id
       await Book.remove({_id:id});
+      //redirect to books
       res.redirect('/books');
     }catch(err){
       res.status(500).json({message:err.message});

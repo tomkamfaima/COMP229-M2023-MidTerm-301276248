@@ -1,3 +1,8 @@
+/*Author: Kam Fai, Ma
+Student ID: 301276248
+Date:   07/04/2023
+Filename: server.js*/
+
 let app = require('./server/config/app');
 let debug = require('debug')('comp308-w2019-midterm:server');
 let http = require('http');
